@@ -11,22 +11,11 @@ object BJImpr {
       .appName("ImprCalculation")
       .getOrCreate()
     val reader = sparkSession.read.option("header", "true").option("sep", "|")
-    //    val imprDf = reader.csv("C:/Users/shhu6001/Downloads/data/2018-01-25/NORMAL/FB/2072,6.csv")
-    //    val dmaDf = reader.csv("C:/Users/shhu6001/Downloads/data/STATIC_DATA/DESIGNATED_MARKET_AREA.csv").filter(col("DESIGNATED_MARKET_AREA_NAME") === "Beijing")
-    //    val cmpgDf = reader.csv("C:/Users/shhu6001/Downloads/data/2018-01-25/METADATA/campaign.csv")
 
     val impr28Df = reader.csv("C:/Users/shhu6001/Downloads/data/2018-01-28/NORMAL/FB/*.csv")
     val impr25Df = reader.csv("C:/Users/shhu6001/Downloads/data/2018-01-25/NORMAL/FB/*.csv")
 
     import sparkSession.implicits._
-    //    dmaDf.select("REPORTABLE_DESIGNATED_MARKET_AREA_ID", "DESIGNATED_MARKET_AREA_NAME").show
-    //    val result = imprDf.as("impr")
-    //      .join(dmaDf.as("dma"), col("dma.REPORTABLE_DESIGNATED_MARKET_AREA_ID") === col("impr.DESIGNATED_MARKET_AREA_ID"))
-    //      .join(cmpgDf, "CAMPAIGN_ID")
-    //      .groupBy("CAMPAIGN_ID", "CAMPAIGN_NAME")
-    //      .agg(sum("IMPRESSIONS").as("IMPRESSIONS"))
-    //      .as[TestData]
-
     val result = impr28Df.as("impr_28")
                 .groupBy("impr_28.PLACEMENT_ID")
                 .agg(sum("impr_28.IMPRESSIONS").as("total_impr_28"))
