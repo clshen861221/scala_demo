@@ -14,31 +14,40 @@ object BJImpr {
 
     val impr28Df = reader.csv("C:/Users/shhu6001/Downloads/data/2018-01-28/NORMAL/FB/*.csv")
     val impr25Df = reader.csv("C:/Users/shhu6001/Downloads/data/2018-01-25/NORMAL/FB/*.csv")
+    val cmpgDf = reader.csv("C:/Users/shhu6001/Downloads/data/2018-01-28/METADATA/CAMPAIGN/*.csv")
 
     import sparkSession.implicits._
-    val result = impr28Df.as("impr_28")
-                .groupBy("impr_28.PLACEMENT_ID")
-                .agg(sum("impr_28.IMPRESSIONS").as("total_impr_28"))
-                .as("total_28")
-                .join(impr25Df.as("impr_25")
-                      .groupBy("impr_25.PLACEMENT_ID")
-                      .agg(sum("impr_25.IMPRESSIONS").as("total_impr_25"))
-                      .as("total_25"), col("total_28.PLACEMENT_ID") === col("total_25.PLACEMENT_ID"))
-                .where(col("total_28.total_impr_28") < (col("total_25.total_impr_25")+ 100000))
-                .select("total_28.PLACEMENT_ID","total_28.total_impr_28","total_25.total_impr_25")
+
+    val result = impr28Df.as("data_28").groupBy("data_28.CAMPAIGN_ID","data_28.PLACEMENT_ID").agg(sum("data_28.IMPRESSIONS").as("c_total_impr_28")).as("t_total_28")
+                .join(impr25Df.as("data_25").groupBy("data_25.CAMPAIGN_ID","data_25.PLACEMENT_ID").agg(sum("data_25.IMPRESSIONS").as("c_total_impr_25")).as("t_total_25")
+                    , col("t_total_28.CAMPAIGN_ID") === col("t_total_25.CAMPAIGN_ID") && col("t_total_28.PLACEMENT_ID") === col("t_total_25.PLACEMENT_ID"))
+                .join(impr28Df.as("data_unmeasured_28")
+                      .where(col("data_unmeasured_28.DEMOGRAPHIC_ID") === 25000)
+                      .groupBy("data_unmeasured_28.CAMPAIGN_ID","data_unmeasured_28.PLACEMENT_ID")
+                      .agg(sum("data_unmeasured_28.IMPRESSIONS").as("c_total_unmeasured_impr_28"))
+                      .as("t_total_unmeasured_28")
+                      ,col("t_total_28.CAMPAIGN_ID") === col("t_total_unmeasured_28.CAMPAIGN_ID") && col("t_total_28.PLACEMENT_ID") === col("t_total_unmeasured_28.PLACEMENT_ID")
+                      )
+                .where(col("t_total_28.c_total_impr_28") < (col("t_total_25.c_total_impr_25")+ 100000) && (col("t_total_unmeasured_28.c_total_unmeasured_impr_28")/col("t_total_28.c_total_impr_28")) > 0.03)
+                .join(cmpgDf.as("data_cmp"), col("t_total_28.CAMPAIGN_ID") === col("data_cmp.CAMPAIGN_ID"),"left")
+                .select("t_total_28.CAMPAIGN_ID","data_cmp.CAMPAIGN_NAME","t_total_28.PLACEMENT_ID","t_total_28.c_total_impr_28","t_total_25.c_total_impr_25","t_total_unmeasured_28.c_total_unmeasured_impr_28")
                 .as[TestData]
+    
     
     result.show()
 //    result.foreach(println(_))
 
   }
-
+ 
 }
 
 case class TestData(
+  CAMPAIGN_ID: String,
+  CAMPAIGN_NAME: String,
   PLACEMENT_ID:   String,
-  total_impr_28: String,
-  total_impr_25: String
+  c_total_impr_28: String,
+  c_total_impr_25: String,
+  c_total_unmeasured_impr_28: String
   
 //  ,
 //  CAMPAIGN_NAME: String,
