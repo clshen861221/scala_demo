@@ -1,4 +1,4 @@
-package com.nielsen.scala_demo.test
+package com.nielsen.scala_demo.problem
 
 object Problem {
   def flipAndInvertImage1(A: Array[Array[Int]]): Array[Array[Int]] = {

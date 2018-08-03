@@ -1,4 +1,4 @@
-package com.nielsen.scala_demo.test
+package com.nielsen.scala_demo.test.chapter6_object
 
 class TrafficLightColor {
 

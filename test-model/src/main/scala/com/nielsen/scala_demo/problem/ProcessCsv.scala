@@ -1,4 +1,4 @@
-package com.nielsen.scala_demo.test
+package com.nielsen.scala_demo.problem
 
 object ProcessCsv {
 

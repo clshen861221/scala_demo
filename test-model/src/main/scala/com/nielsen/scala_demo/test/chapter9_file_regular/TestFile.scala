@@ -1,4 +1,4 @@
-package com.nielsen.scala_demo.test
+package com.nielsen.scala_demo.test.chapter9_file_regular
 
 import scala.io.Source
 import java.io.File
@@ -11,7 +11,7 @@ import java.net.URL
 
 object TestFile {
   def main(args: Array[String]): Unit = {
-    val source = Source.fromFile("F:/study/spark/workspace/scala_demo/test-model/src/main/scala/com/nielsen/scala_demo/test/data/test.txt", "UTF-8")
+    val source = Source.fromFile("D:/study/scala/workspace/scala_demo/test-model/src/main/scala/com/nielsen/scala_demo/test/data/test.txt", "UTF-8")
     /*  val lineIterator = source.getLines()
         lineIterator.foreach(p => println(p))
         println(source.mkString)   //把整个文件读成一个字符串
