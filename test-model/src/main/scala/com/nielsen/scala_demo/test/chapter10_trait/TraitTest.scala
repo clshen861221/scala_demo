@@ -14,9 +14,9 @@ object TraitTest {
     val acct2 = new SavingAccount with ConsoleLogger with ShortLogger with TimestampLogger //无法判断先执行哪个trait的log，但是可以通过super[TimestampLogger].log来指定执行哪个
     acct2.withdraw(2, 1)
 
-    val acct3 = new {
-      val filename = "myapp.log"   //提前定义
-    } with SavingAccount with FileLogger
+//    val acct3 = new {
+//      val filename = "myapp.log"   //提前定义
+//    } with SavingAccount with FileLogger
   }
 }
 
