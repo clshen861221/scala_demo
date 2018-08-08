@@ -14,9 +14,9 @@ object TraitTest {
     val acct2 = new SavingAccount with ConsoleLogger with ShortLogger with TimestampLogger //无法判断先执行哪个trait的log，但是可以通过super[TimestampLogger].log来指定执行哪个
     acct2.withdraw(2, 1)
 
-//    val acct3 = new {
-//      val filename = "myapp.log"   //提前定义
-//    } with SavingAccount with FileLogger
+    //    val acct3 = new {
+    //      val filename = "myapp.log"   //提前定义
+    //    } with SavingAccount with FileLogger
   }
 }
 
@@ -71,4 +71,17 @@ trait FileLogger extends Logger {
   val filename: String
   val out = new PrintStream(filename)
   def log(msg: String) { out.println(msg); out.flush() }
+}
+
+trait LoggedException extends Logged {
+  this: Exception =>  //自身类型Exception，这意味着，它只能被混入Exception的子类;在特质的方法中可以调用该自身类型的任何方法。
+  def log() {
+    log(getMessage)
+
+  }
+}
+
+trait LoggedException1 extends Logged {
+  this:{def getMessage(): String } => //这个特质可以被混入任何拥有getMessage方法的类。
+    def log() {log(getMessage())}
 }
