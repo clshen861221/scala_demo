@@ -31,6 +31,7 @@ object CalculatePlacement {
                 .where(col("t_total_28.c_total_impr_28") < (col("t_total_25.c_total_impr_25")+ 100000) && (col("t_total_unmeasured_28.c_total_unmeasured_impr_28")/col("t_total_28.c_total_impr_28")) > 0.03)
                 .join(cmpgDf.as("data_cmp"), col("t_total_28.CAMPAIGN_ID") === col("data_cmp.CAMPAIGN_ID"),"left")
                 .select("t_total_28.CAMPAIGN_ID","data_cmp.CAMPAIGN_NAME","t_total_28.PLACEMENT_ID","t_total_28.c_total_impr_28","t_total_25.c_total_impr_25","t_total_unmeasured_28.c_total_unmeasured_impr_28")
+                .withColumn("ratio", col("t_total_unmeasured_28.c_total_unmeasured_impr_28")/col("t_total_28.c_total_impr_28"))
                 .as[PlacementData]
     
     
